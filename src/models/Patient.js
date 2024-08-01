@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Schema } from 'zod'
+
 
 
 const patientShema = new mongoose.Schema(
@@ -35,11 +35,27 @@ const patientShema = new mongoose.Schema(
           },
           date : {
             type : Date,
-            required : true
+            required : true,
+            default : Date.now
           },
-          doctor : { type : Schema.Types.ObjectId, ref : 'Doctor' }
+          doc : { 
+            type : mongoose.Schema.Types.ObjectId, ref : 'Doctor' 
+          }
 
   }
 )
+
+
+patientShema.methods.validateEmail = function(email) {
+  
+  const match = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/
+
+  if(!match.test(email)) {
+      return true
+  }
+
+};
+
+
 
 export const Patient = mongoose.model('Patient', patientShema)

@@ -32,7 +32,7 @@ const doctorShema = new mongoose.Schema(
             required : [true ,'password es obligatorio'],
             minLength : [6, 'password minimo 6']
           }, 
-          avatar: {
+          file: {
             type : String
           }
 
@@ -68,7 +68,7 @@ doctorShema.methods.validateEmail = function(email) {
 };
 
 doctorShema.methods.validatePassword = function( password ) {
-   console.log(password);
+   //console.log(password);
     if(!password ||  password.trim().length < 6) {
       return true
     }
