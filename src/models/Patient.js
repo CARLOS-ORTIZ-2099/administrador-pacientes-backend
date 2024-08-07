@@ -31,7 +31,7 @@ const patientShema = new mongoose.Schema(
 
           symptoms : {
             type : String,
-            required : true
+            required : [true, 'symptoms es obligatorio']
           },
           date : {
             type : Date,
@@ -50,7 +50,7 @@ patientShema.methods.validateEmail = function(email) {
   
   const match = /^[^@]+@[^@]+\.[a-zA-Z]{2,}$/
 
-  if(!match.test(email)) {
+  if(!match.test(email) || email.length < 1) {
       return true
   }
 

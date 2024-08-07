@@ -3,14 +3,17 @@ import bcrypt from 'bcrypt'
 import fs from 'fs/promises'
 import { findRoutes } from "../libs/findRoutes.js";
 import { MyError } from "../error/MyError.js";
-
+import colors from 'colors'
 
 
 
 export const getDoctors = async (req, res, next) => {
     try {
         //throw new Error()
-        const doctors = await Doctor.find()
+        // obtener todos los doctores exepto el doctor autenticado actualmente , es decir solo ver a sus colegas
+        const {id} = req.user
+        console.log(id);
+        const doctors = await Doctor.find({_id : {$ne : id}}).select('-password')
         //console.log(doctors);
         res.send(doctors)
     }catch(error) {
@@ -22,16 +25,15 @@ export const getDoctors = async (req, res, next) => {
 
 export const getDoctor = async (req, res, next) => {
     try {
+        //throw new Error()
         const {id} = req.params
         const doctor = await Doctor.findById({_id : id})
         console.log(doctor);
         if(!doctor) {
             return next(new MyError('no existe el doctor'))
-            // res.send({message : 'no existe el doctor'})
         }
         res.send(doctor)
     }catch(error) {
-        //res.status(500).send({message : error})
         next(new MyError(error.message || 'ocurrio un error inesperado al obtener usuario' ))
     }
 }
@@ -59,7 +61,7 @@ export const deleteDoctor = async (req, res, next) => {
        next(new MyError(error.message || 'ocurrio un error inesperado al eliminar al usuario')) 
     }
 }
-
+ 
 
 export const updateDoctor = async (req, res, next) => {
     try {
@@ -85,7 +87,7 @@ export const updateDoctor = async (req, res, next) => {
                 return next(new MyError('email invalido')) 
                 //res.send({message : 'email invalido'})
             }
-            const doctFound = await Doctor.find({email : body.email})
+            const doctFound = await Doctor.find({email : body.email,  _id : {$ne :id}})
             //console.log(doctFound);
             if(doctFound.length > 0) {
                 return next(new MyError('este correo ya esta en uso'))  
@@ -104,21 +106,23 @@ export const updateDoctor = async (req, res, next) => {
         }
         
         if(req.file) {
-            body.file = `/uploads/${req.file.filename}`
+            body.file = `${req.file.filename}`
         }
        
 
-        const doctor = await Doctor.findByIdAndUpdate({ _id: id }, body)
-        //console.log(doctor);
+        const doctor = await Doctor.findById({ _id: id })
+        .select('-password')
+        //console.log(doctor); 
         if(!doctor) {
             return next(new MyError('no existe el doctor')) 
             //res.send({message : 'no existe el doctor'})
+        } 
+        if(req.file && doctor.file) {
+            //const firstPipe  = doctor.file.indexOf('/')
+            await fs.unlink(findRoutes( 'uploads/'+doctor.file )) 
         }
-        if(req.file) {
-            const firstPipe  = doctor.file.indexOf('/')
-            await fs.unlink(findRoutes( doctor.file.slice(firstPipe+1) ))
-        }
-        res.send(doctor)
+        const doctorUpdate = await Doctor.findByIdAndUpdate({ _id: id }, body, {new : true}).select('-password')
+        res.send(doctorUpdate)  
     }catch(error) {
         /* console.log(error); */
         next(new MyError(error.message || 'ocurrio un error inesperado al actualizar el usuario')) 

@@ -5,7 +5,7 @@ import {createPatient, deletePatient, getPatient, getPatients, updatePatient } f
 export const patientRoutes = express.Router()
 
 
-patientRoutes.get('/get-patients', getPatients)
+patientRoutes.get('/get-patients/', getPatients)
 patientRoutes.get('/get-patient/:id', getPatient)
 patientRoutes.delete('/delete-patient/:id', deletePatient)
 patientRoutes.post('/create-patient', createPatient)

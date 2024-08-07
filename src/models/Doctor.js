@@ -5,11 +5,11 @@ import bcrypt from 'bcrypt'
 const doctorShema = new mongoose.Schema(
         {
           name : { 
-            type : String, required : [true, 'name obligatorio']
+            type : String, required : [true, 'name es obligatorio']
           },
 
           lastName : {
-            type : String, required : [true, 'lastname obligatorio']
+            type : String, required : [true, 'lastname es obligatorio']
           } ,
         /* segun la documentacion unique propiedad no es una validacion como tal de mongoose
            a diferencia de las otras validaciones del esquema como min, max, required, ect, esta
@@ -19,8 +19,8 @@ const doctorShema = new mongoose.Schema(
           cedula : {
             type : String, required : [true, 'cedula es obligatorio'],
             unique: true,
-            minLength : [8, 'minimo 8 caracteres'],
-            maxLength : [8, 'maximo 8 caracteres']
+            minLength : [8, 'la cedula tiene que ser de minimo 8 caracteres'],
+            maxLength : [8, 'la cedula tiene que ser de maximo maximo 8 caracteres']
           } , 
           email : {
             type : String, required : [true,'email es obligatorio'],
@@ -30,7 +30,7 @@ const doctorShema = new mongoose.Schema(
           password : {
             type : String,
             required : [true ,'password es obligatorio'],
-            minLength : [6, 'password minimo 6']
+            minLength : [6, 'el password deberia ser minimo de 6 caracteres']
           }, 
           file: {
             type : String
