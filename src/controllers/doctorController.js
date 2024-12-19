@@ -61,7 +61,7 @@ export const deleteDoctor = async (req, res, next) => {
        next(new MyError(error.message || 'ocurrio un error inesperado al eliminar al usuario')) 
     }
 }
- 
+  
 
 export const updateDoctor = async (req, res, next) => {
     try {
@@ -78,6 +78,7 @@ export const updateDoctor = async (req, res, next) => {
            otro doctor con el mismo correo al que se quiere cambiar 
            y que este correo sea valido
         */
+        if(req.user.id != id) return next(new MyError('no es tu cuenta')) 
         console.log(body);
         const doc = new Doctor()
         if(body.email) {
@@ -87,12 +88,12 @@ export const updateDoctor = async (req, res, next) => {
                 return next(new MyError('email invalido')) 
                 //res.send({message : 'email invalido'})
             }
-            const doctFound = await Doctor.find({email : body.email,  _id : {$ne :id}})
+            /* const doctFound = await Doctor.find({email : body.email,  _id : {$ne :id}})
             //console.log(doctFound);
             if(doctFound.length > 0) {
                 return next(new MyError('este correo ya esta en uso'))  
                 //res.send({message : 'este correo ya esta en uso'})
-            }
+            } */
         }
         if(body.password) {
             const validatePassword  = doc.validatePassword(body.password)
